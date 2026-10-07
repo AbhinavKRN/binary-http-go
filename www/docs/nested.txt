@@ -1,0 +1,1 @@
+A file one directory down, to prove path resolution walks without escaping.

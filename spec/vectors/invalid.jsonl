@@ -1,0 +1,25 @@
+{"name": "first bytes are not the preface", "note": "SPEC 1.3", "role": "server", "preface": false, "hex": "47 45 54 20 2f 69 6e 64 65 78", "reject": "connection", "status": 400}
+{"name": "frame length above MAX_FRAME_SIZE", "note": "SPEC 2.1 -- refused before a payload byte is buffered", "role": "server", "hex": "01 00 00 01 01 00 00 01", "reject": "connection", "status": 400}
+{"name": "request on an even stream id", "note": "SPEC 4.3", "role": "server", "hex": "00 00 09 01 01 00 00 02  01 00 01 2f 01 83 00 01 78", "reject": "connection", "status": 400}
+{"name": "request on stream 0", "note": "SPEC 4.1", "role": "server", "hex": "00 00 09 01 01 00 00 00  01 00 01 2f 01 83 00 01 78", "reject": "connection", "status": 400}
+{"name": "stream id reused", "note": "SPEC 4.2", "role": "server", "hex": "00 00 09 01 01 00 00 01  01 00 01 2f 01 83 00 01 78   00 00 09 01 01 00 00 01  01 00 01 2f 01 83 00 01 78", "reject": "connection", "status": 400}
+{"name": "method code 0x00", "note": "SPEC 5.1", "role": "server", "hex": "00 00 05 01 01 00 00 01  00 00 01 2f 00", "reject": "stream", "status": 400}
+{"name": "method code 0x08 is unassigned", "note": "SPEC 5.1", "role": "server", "hex": "00 00 05 01 01 00 00 01  08 00 01 2f 00", "reject": "stream", "status": 400}
+{"name": "path does not start with /", "role": "server", "hex": "00 00 05 01 01 00 00 01  01 00 01 78 00", "reject": "stream", "status": 400}
+{"name": "empty path", "role": "server", "hex": "00 00 04 01 01 00 00 01  01 00 00 00", "reject": "stream", "status": 400}
+{"name": "dot-dot segment in the path", "note": "SPEC 5.1 -- this is the arbitrary-file-read", "role": "server", "hex": "00 00 0b 01 01 00 00 01  01 00 07 2f 2e 2e 2f 65 74 63 00", "reject": "stream", "status": 400}
+{"name": "percent-encoded dot-dot segment", "note": "decode first, then judge", "role": "server", "hex": "00 00 0f 01 01 00 00 01  01 00 0b 2f 25 32 65 25 32 65 2f 65 74 63 00", "reject": "stream", "status": 400}
+{"name": "percent-encoded NUL in the path", "role": "server", "hex": "00 00 0a 01 01 00 00 01  01 00 06 2f 61 25 30 30 62 00", "reject": "stream", "status": 400}
+{"name": "backslash in the path", "note": "a separator on the host filesystem, not in this protocol", "role": "server", "hex": "00 00 08 01 01 00 00 01  01 00 04 2f 61 5c 62 00", "reject": "stream", "status": 400}
+{"name": "raw space in the path", "note": "SPEC 5.1 allows 0x21-0x7e only", "role": "server", "hex": "00 00 08 01 01 00 00 01  01 00 04 2f 61 20 62 00", "reject": "stream", "status": 400}
+{"name": "header entry prefix 0x01 is unassigned", "note": "SPEC 5.3 -- reserved for a dynamic table", "role": "server", "hex": "00 00 0a 01 01 00 00 01  01 00 01 2f 01 01 00 02 78 79", "reject": "stream", "status": 400}
+{"name": "static table index 0", "role": "server", "hex": "00 00 09 01 01 00 00 01  01 00 01 2f 01 80 00 01 78", "reject": "stream", "status": 400}
+{"name": "static table index 11 does not exist", "role": "server", "hex": "00 00 09 01 01 00 00 01  01 00 01 2f 01 8b 00 01 78", "reject": "stream", "status": 400}
+{"name": "uppercase literal header name", "note": "SPEC 5.3 requires lowercase on the wire", "role": "server", "hex": "00 00 0b 01 01 00 00 01  01 00 01 2f 01 00 01 48 00 01 78", "reject": "stream", "status": 400}
+{"name": "header count promises more entries than the payload holds", "role": "server", "hex": "00 00 09 01 01 00 00 01  01 00 01 2f 02 83 00 01 78", "reject": "stream", "status": 400}
+{"name": "value length overruns the payload", "role": "server", "hex": "00 00 09 01 01 00 00 01  01 00 01 2f 01 83 00 ff 78", "reject": "stream", "status": 400}
+{"name": "trailing byte after the last header entry", "note": "SPEC 5.3 -- the payload must end where the entries do", "role": "server", "hex": "00 00 0a 01 01 00 00 01  01 00 01 2f 01 83 00 01 78 ff", "reject": "stream", "status": 400}
+{"name": "content-length disagrees with the delivered body", "note": "SPEC 5.5 -- checked, not trusted", "role": "server", "hex": "00 00 0a 01 00 00 00 01  03 00 02 2f 75 01 81 00 01 35   00 00 02 03 01 00 00 01  68 69", "reject": "stream", "status": 400}
+{"name": "DATA on a stream that was never opened", "role": "server", "hex": "00 00 02 03 01 00 00 09  68 69", "reject": "connection", "status": 400}
+{"name": "DATA after END_MESSAGE closed the stream", "role": "server", "hex": "00 00 09 01 01 00 00 01  01 00 01 2f 01 83 00 01 78   00 00 02 03 01 00 00 01  68 69", "reject": "connection", "status": 400}
+{"name": "a server receiving a RESPONSE frame", "note": "SPEC 3.2", "role": "server", "hex": "00 00 03 02 01 00 00 01  00 c8 00", "reject": "connection", "status": 400}

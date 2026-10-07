@@ -1,0 +1,5 @@
+* text=auto
+*.go text eol=lf
+go.mod text eol=lf
+*.jsonl text eol=lf
+*.md text diff=markdown
